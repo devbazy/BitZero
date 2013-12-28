@@ -23,6 +23,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -49,10 +51,12 @@ public class MainActivity extends Activity {
     Handler handler; 
     private CardUI mCardView;
     public static AlertDialog idia;
+    static MainActivity ma;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ma=this;
 		setContentView(R.layout.activity_main);
 		
 		// Load address from storage
@@ -74,20 +78,21 @@ public class MainActivity extends Activity {
 		} else {
 			
 			// Let's do some background stuff
-			mCardView = (CardUI) findViewById(R.id.cardsview);
-			mCardView.setSwipeable(false);
+			if(isInternetAvailable(MainActivity.this)){
+				mCardView = (CardUI) findViewById(R.id.cardsview);
+				mCardView.setSwipeable(false);
 			
-			for (Map.Entry<String, String> entry : addr.entrySet()) {
-				(new Fetch()).execute(entry.getValue(),entry.getKey());
+				for (Map.Entry<String, String> entry : addr.entrySet()) {
+					(new Fetch()).execute(entry.getValue(),entry.getKey());
+				}
+			
+				mCardView.refresh();
+			
+				mCardView.setLongClickable(true);
+				mCardView.setOnLongClickListener(null);
+			}else{
+				showDialog(R.string.dialog_title_uhost,getString(R.string.dialog_msg_ckconnection));
 			}
-			
-			Log.d("Cards",String.valueOf(mCardView.getChildCount()));
-			
-			mCardView.refresh();
-			
-			mCardView.setLongClickable(true);
-			mCardView.setOnLongClickListener(null);
-			
 		}
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -230,27 +235,26 @@ public class MainActivity extends Activity {
 		
 		protected void aparse(final String l, String a,String val) {	
 			// TODO if valuta
-			if(val==Address.Val[0][0]){
+			if(val==Address.Val[1][0]){
 				String read = request("http://blockchain.info/address/"+a+"?format=json");
 				JSONObject jsono;
 				try {
 					jsono = new JSONObject(read);
-					coinAddr = new Address(Address.Val[0][0],l,jsono.getString("address"),jsono.getInt("n_tx"),jsono.getInt("final_balance"));
+					coinAddr = new Address(Address.Val[1][0],l,jsono.getString("address"),jsono.getInt("n_tx"),jsono.getInt("final_balance"));
 				
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}else if(val==Address.Val[0][1]){
+			}else if(val==Address.Val[1][1]){
 				int received = Integer.valueOf(request("http://explorer.litecoin.net/chain/Litecoin/q/getreceivedbyaddress/"+a));
 				int sent = Integer.valueOf(request("http://explorer.litecoin.net/chain/Litecoin/q/getsentbyaddress/"+a));
 				// received - sent
-				coinAddr = new Address(Address.Val[0][1],l,a,-1,received-sent);
-			}else if(val==Address.Val[0][2]){
+				coinAddr = new Address(Address.Val[1][1],l,a,-1,received-sent);
+			}else if(val==Address.Val[1][2]){
 				int balance = Integer.valueOf(request("http://dogechain.info/chain/Dogecoin/q/addressbalance/"+a));
 				// received - sent
-				coinAddr = new Address(Address.Val[0][2],l,a,-1,balance);
-				Log.d("",Address.Val[0][2]);
+				coinAddr = new Address(Address.Val[1][2],l,a,-1,balance);
 			}
 			try {
 				CoinCard aCard = new CoinCard(coinAddr);
@@ -332,6 +336,27 @@ public class MainActivity extends Activity {
 		return builder.toString();
     }
     
+    public static boolean isInternetAvailable(Context context){
+        NetworkInfo info = (NetworkInfo)((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        if (info == null){
+             Log.e("","no internet connection");
+             return false;
+        } else{
+            if(info.isConnected()){
+                Log.d(""," internet connection available...");
+                return true;
+            } else{
+                Log.d(""," internet connection");
+                return true;
+            }
+        }
+    }
+	
+	public static void encodeBarcode(CharSequence type, CharSequence data) {
+    	IntentIntegrator integrator = new IntentIntegrator(MainActivity.ma);
+	    integrator.shareText(data, type);
+    }
+    
     public String[] QrParse(String qrtext) {
     	String valuta = qrtext.split(":")[0];
     	String addr_id = qrtext.split(":")[1].substring(0,34);
@@ -343,7 +368,6 @@ public class MainActivity extends Activity {
     		if(i%2==0){
     			p[i]=p[i].replace("?","");
     			amap.put(p[i], p[i+1]);
-    			Log.d("<3", p[i]+ p[i+1]);
     		}
     	}
     	try{

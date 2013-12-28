@@ -26,6 +26,7 @@
 	    Add a BitCoin Address to start.</string>
 	<string name="dialog_title_uhost">Network Error</string>
 	<string name="dialog_msg_uhost">The network isn\'t avviable.</string>
+	<string name="dialog_msg_ckconnection">Connection failed. Connect and restart BitZero</string>
 	
 	<string name="result_failed">No barcode found</string>
 	<string name="result_failed_why">"The user gave up and pressed Back"</string>

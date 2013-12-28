@@ -1,11 +1,13 @@
 package it.thezero.bitzero.adapters;
 
+import it.thezero.bitzero.MainActivity;
 import it.thezero.bitzero.R;
 import it.thezero.bitzero.address.Address;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,12 +29,12 @@ public class CoinCard extends Card {
 	@Override
 	public View getCardContent(Context context) {
 		View view = LayoutInflater.from(context).inflate(R.layout.card_ex, null);
-		Log.d("",addr.getAddress()+" "+addr.getValuta());
-		if(addr.getValuta()==Address.Val[0][0]) {
+
+		if(addr.getValuta()==Address.Val[1][0]) {
 			((ImageView) view.findViewById(R.id.valuta)).setImageDrawable(context.getResources().getDrawable(R.drawable.icon_bitcoin));
-		}else if(addr.getValuta()==Address.Val[0][1]) {
+		}else if(addr.getValuta()==Address.Val[1][1]) {
 			((ImageView) view.findViewById(R.id.valuta)).setImageDrawable(context.getResources().getDrawable(R.drawable.icon_litecoin));
-		}else if(addr.getValuta()==Address.Val[0][2]) {
+		}else if(addr.getValuta()==Address.Val[1][2]) {
 			((ImageView) view.findViewById(R.id.valuta)).setImageDrawable(context.getResources().getDrawable(R.drawable.icon_dogecoin));
 		}
 		
@@ -41,6 +43,13 @@ public class CoinCard extends Card {
 		((TextView) view.findViewById(R.id.bitcoin)).setText("Balance: "+Address.toBTC(addr.getBalance())+" BTC");
 		((TextView) view.findViewById(R.id.tx)).setText("Transaction: "+addr.getTx().toString());
 		
+		((ImageButton) view.findViewById(R.id.qrbtn)).setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				MainActivity.encodeBarcode("TEXT_TYPE", addr.getValuta(true)+":"+addr.getAddress()+"?label="+addr.getName());
+			}
+		});
+		 
 		return view;
 	}
 

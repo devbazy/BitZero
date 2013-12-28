@@ -6,7 +6,7 @@ public class Address {
 	private String address,name,valuta;
 	private Integer n_tx,balance;
 	
-	public static String[][] Val = {{"BTC","LTC","DOG"},{"1","L","D"}};
+	public static String[][] Val = {{"bitcoin","litecoin","dogecoin"},{"BTC","LTC","DOG"},{"1","L","D"}};
 	
 	public Address(String v,String n,String a,Integer tx,Integer b) {
 		setName(n);
@@ -52,16 +52,31 @@ public class Address {
 		balance=b;
 	}
 	
+	public String getValuta(Boolean t){
+		String v="";
+		if(t){
+			for(int i=0;i<Val[1].length;i++){
+				if(valuta==Val[1][i]){
+					v=Val[0][i];
+				}
+			}
+		}else{
+			v=valuta;
+		}
+		return v;
+	}
+	
 	public String getValuta(){
 		return valuta;
 	}
 	
 	private void setValuta(String v){
-		for(int i=0;i<=Val.length;i++){
-			if(v==Val[0][i]){
+		for(int i=0;i<Val[1].length;i++){
+			if(v==Val[1][i]){
 				valuta=v;
 			}
 		}
+		// TODO exception (?)
 	}
 	
 	public static String toBTC(Integer b){
@@ -76,9 +91,9 @@ public class Address {
 	
 	public static String parseValuta(String a){
 		String ret = "";
-		for(int i=0;i<Val[1].length;i++){
-			if(a.startsWith(Val[1][i])){
-				ret=Val[0][i];
+		for(int i=0;i<Val[2].length;i++){
+			if(a.startsWith(Val[2][i])){
+				ret=Val[1][i];
 			}
 		}
 		return ret;
