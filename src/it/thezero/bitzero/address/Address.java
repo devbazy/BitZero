@@ -4,11 +4,12 @@ import java.text.DecimalFormat;
 
 public class Address {
 	private String address,name,valuta;
-	private Integer n_tx,balance;
+	private Integer n_tx;
+	private double balance;
 	
-	public static String[][] Val = {{"bitcoin","litecoin","dogecoin"},{"BTC","LTC","DOG"},{"1","L","D"}};
+	public static String[][] Val = {{"bitcoin","litecoin","dogecoin","zetacoin"},{"BTC","LTC","DOG","ZET"},{"1","L","D","Z"}};
 	
-	public Address(String v,String n,String a,Integer tx,Integer b) {
+	public Address(String v,String n,String a,Integer tx,double b) {
 		setName(n);
 		setAddress(a);
 		setTx(tx);
@@ -44,11 +45,11 @@ public class Address {
 		n_tx=tx;
 	}
 	
-	public Integer getBalance(){
+	public double getBalance(){
 		return balance;
 	}
 	
-	private void setBalance(Integer b){
+	private void setBalance(double b){
 		balance=b;
 	}
 	
@@ -79,7 +80,7 @@ public class Address {
 		// TODO exception (?)
 	}
 	
-	public static String toBTC(Integer b){
+	public static String toBTC(double b){
 		DecimalFormat formatter = new DecimalFormat("#.##########");
 		String s = formatter.format(b*0.00000001);
 		return s;

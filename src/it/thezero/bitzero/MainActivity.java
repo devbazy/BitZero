@@ -240,21 +240,25 @@ public class MainActivity extends Activity {
 				JSONObject jsono;
 				try {
 					jsono = new JSONObject(read);
-					coinAddr = new Address(Address.Val[1][0],l,jsono.getString("address"),jsono.getInt("n_tx"),jsono.getInt("final_balance"));
+					coinAddr = new Address(Address.Val[1][0],l,jsono.getString("address"),jsono.getInt("n_tx"),jsono.getDouble("final_balance"));
 				
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else if(val==Address.Val[1][1]){
-				int received = Integer.valueOf(request("http://explorer.litecoin.net/chain/Litecoin/q/getreceivedbyaddress/"+a));
-				int sent = Integer.valueOf(request("http://explorer.litecoin.net/chain/Litecoin/q/getsentbyaddress/"+a));
+				double received = Double.valueOf(request("http://explorer.litecoin.net/chain/Litecoin/q/getreceivedbyaddress/"+a));
+				double sent = Double.valueOf(request("http://explorer.litecoin.net/chain/Litecoin/q/getsentbyaddress/"+a));
 				// received - sent
 				coinAddr = new Address(Address.Val[1][1],l,a,-1,received-sent);
 			}else if(val==Address.Val[1][2]){
-				int balance = Integer.valueOf(request("http://dogechain.info/chain/Dogecoin/q/addressbalance/"+a));
+				double balance = Double.valueOf(request("http://dogechain.info/chain/Dogecoin/q/addressbalance/"+a));
 				// received - sent
 				coinAddr = new Address(Address.Val[1][2],l,a,-1,balance);
+			}else if(val==Address.Val[1][3]){
+				double balance = Double.valueOf(request("http://zetachain.com/chain/Zetacoin/q/addressbalance/"+a));
+				// received - sent
+				coinAddr = new Address(Address.Val[1][3],l,a,-1,balance);
 			}
 			try {
 				CoinCard aCard = new CoinCard(coinAddr);

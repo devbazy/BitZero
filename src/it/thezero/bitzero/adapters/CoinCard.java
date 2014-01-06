@@ -36,11 +36,22 @@ public class CoinCard extends Card {
 			((ImageView) view.findViewById(R.id.valuta)).setImageDrawable(context.getResources().getDrawable(R.drawable.icon_litecoin));
 		}else if(addr.getValuta()==Address.Val[1][2]) {
 			((ImageView) view.findViewById(R.id.valuta)).setImageDrawable(context.getResources().getDrawable(R.drawable.icon_dogecoin));
+		}else if(addr.getValuta()==Address.Val[1][3]) {
+			((ImageView) view.findViewById(R.id.valuta)).setImageDrawable(context.getResources().getDrawable(R.drawable.icon_zetacoin));
 		}
 		
 		((TextView) view.findViewById(R.id.label)).setText(title);
 		((TextView) view.findViewById(R.id.address)).setText("Address: "+addr.getAddress());
-		((TextView) view.findViewById(R.id.bitcoin)).setText("Balance: "+Address.toBTC(addr.getBalance())+" BTC");
+		if(addr.getValuta()==Address.Val[1][0]) {
+			((TextView) view.findViewById(R.id.bitcoin)).setText("Balance: "+Address.toBTC(addr.getBalance())+" "+addr.getValuta());
+		}else if(addr.getValuta()==Address.Val[1][1]) {
+			((TextView) view.findViewById(R.id.bitcoin)).setText("Balance: "+addr.getBalance()+" "+addr.getValuta());
+		}else if(addr.getValuta()==Address.Val[1][2]) {
+			((TextView) view.findViewById(R.id.bitcoin)).setText("Balance: "+addr.getBalance()+" "+addr.getValuta());
+		}else if(addr.getValuta()==Address.Val[1][3]) {
+			((TextView) view.findViewById(R.id.bitcoin)).setText("Balance: "+addr.getBalance()+" "+addr.getValuta());
+		}
+		
 		((TextView) view.findViewById(R.id.tx)).setText("Transaction: "+addr.getTx().toString());
 		
 		((ImageButton) view.findViewById(R.id.qrbtn)).setOnClickListener(new OnClickListener(){
